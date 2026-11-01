@@ -11,10 +11,16 @@ export default function Agent() {
     add(`  scheme=${a.scheme} network=${a.network}`); add(`  asset MUSD ${a.asset}`);
     add(`  amount ${a.maxAmountRequired} wei (${a.description})`); add(`  requestId ${a.extra.requestId.slice(0, 18)}…`);
     await new Promise((r) => setTimeout(r, 1200));
-    add(a.extra.mock ? "> approve + payCall(tollId, requestId, maxPrice) — MOCK mode (testnet deploy pending)" : "> payCall on Mezo testnet");
-    await new Promise((r) => setTimeout(r, 1200));
+    let txHash: string | undefined;
+    if (a.extra.mock) add("> payCall — MOCK mode");
+    else {
+      add(`> TollgateMUSD.payCall(${a.extra.tollId}, requestId, maxPrice) on Mezo testnet…`);
+      const pr = await fetch("/api/agent-pay", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ tollId: a.extra.tollId, requestId: a.extra.requestId, maxAmount: a.maxAmountRequired }) });
+      const pj = await pr.json(); if (!pr.ok) { add(`! pay failed: ${pj.error}`); return; }
+      txHash = pj.txHash; add(`  ✔ mined in block ${pj.block} — tx ${txHash}`); add(`  https://explorer.test.mezo.org/tx/${txHash}`);
+    }
     add(`> retry with X-PAYMENT receipt`);
-    const r2 = await fetch(url, { headers: { "x-payment": JSON.stringify({ requestId: a.extra.requestId }) } });
+    const r2 = await fetch(url, { headers: { "x-payment": JSON.stringify({ requestId: a.extra.requestId, txHash }) } });
     add(`< HTTP ${r2.status} x-payment-response: ${r2.headers.get("x-payment-response")?.slice(0, 60)}…`); add(`  body ${await r2.text()}`);
   }
   return (<main style={{ maxWidth: 960, margin: "0 auto", padding: 32 }}>

@@ -8,7 +8,7 @@ const input = { background: "#0b0b0f", color: "#eee", border: "1px solid #333", 
 
 export default function Home() {
   const [tolls, setTolls] = useState<Toll[]>([]);
-  const [f, setF] = useState({ name: "", upstream: "", priceMusd: "0.01", payee: "" });
+  const [f, setF] = useState({ name: "", upstream: "", priceMusd: "0.01", payee: "", createTxHash: "" });
   const [msg, setMsg] = useState("");
   const refresh = () => fetch("/api/tolls").then((r) => r.json()).then(setTolls);
   useEffect(() => { refresh(); const t = setInterval(refresh, 4000); return () => clearInterval(t); }, []);
@@ -16,7 +16,7 @@ export default function Home() {
   async function create() {
     const r = await fetch("/api/tolls", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(f) });
     const j = await r.json();
-    setMsg(r.ok ? `Toll link: ${location.origin}${j.tollLink}` : j.error); refresh();
+    setMsg(r.ok ? `Toll link: ${location.origin}${j.tollLink}  (on-chain toll #${j.onchainId})` : j.error); refresh();
   }
   const calls = tolls.flatMap((t) => t.calls.map((c) => ({ ...c, toll: t.name })));
   const revenue = calls.reduce((s, c) => s + Number(c.amount), 0);
@@ -35,6 +35,7 @@ export default function Home() {
         <input style={input} placeholder="Upstream API URL (https://...)" value={f.upstream} onChange={(e) => setF({ ...f, upstream: e.target.value })} />
         <input style={input} placeholder="Price per call (MUSD)" value={f.priceMusd} onChange={(e) => setF({ ...f, priceMusd: e.target.value })} />
         <input style={input} placeholder="Payee address on Mezo (0x...)" value={f.payee} onChange={(e) => setF({ ...f, payee: e.target.value })} />
+        <input style={input} placeholder="createToll tx hash on Mezo (links on-chain toll id)" value={f.createTxHash} onChange={(e) => setF({ ...f, createTxHash: e.target.value })} />
         <button onClick={create} style={{ background: "#f7931a", border: 0, borderRadius: 8, padding: "10px 18px", fontWeight: 600 }}>Generate toll link</button>
         {msg && <p style={{ color: "#f7931a" }}>{msg}</p>}
       </div>
