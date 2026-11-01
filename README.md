@@ -17,6 +17,12 @@
 - MUSD `0x118917a40FAF1CD7a13dB0Ef56C86De7973Ac503` (symbol MUSD, **18 decimals**)
 - Compiler: solc 0.8.28, `evm_version = london` (per Mezo docs)
 
+
+## Live on Mezo testnet (1 Nov 2026)
+- **TollgateMUSD:** [`0x449589641A2134e86aaEf5E463AD5419F273440D`](https://explorer.test.mezo.org/address/0x449589641A2134e86aaEf5E463AD5419F273440D)
+- **Deploy tx:** [`0xe67538f5…`](https://explorer.test.mezo.org/tx/0xe67538f539c3f9791fe87ed3728be23608699d55bf98a2a0f199281d3b18b29e)
+- Details: [`docs/DEPLOYED.md`](docs/DEPLOYED.md)
+
 ## Run locally (mock payments, no chain needed)
 ```bash
 cd web && npm install && cp .env.example .env.local && npm run build && npm start
