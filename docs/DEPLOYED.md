@@ -35,3 +35,7 @@ Agent still needs testnet MUSD (borrow at https://mezo.org/feature/borrow after 
 - Agent wallet `0x7E6743880A7A3AbB928C9be758b504A56dBA6105` was funded with **100 MUSD** (plus a slice of BTC for gas) by transfer from the deployer.
 - Note: the Mezo faucet rate-limited the agent address (24h cooldown), so it was funded via deployer transfer instead of the faucet.
 - The browser agent console (`/agent`) pays live via `/api/agent-pay`, which signs with `AGENT_PRIVATE_KEY` from the server env (demo only; never committed).
+
+## Public hosting
+GitHub + Drive demo are the judge-facing artifacts for now. A Cloudflare quick tunnel from the build box failed (outbound QUIC/7844 blocked). Stable public URL needs a Vercel (or similar) deploy of `web/` with env:
+`TOLLGATE_CONTRACT=0x449589641A2134e86aaEf5E463AD5419F273440D`, `TOLLGATE_MOCK_PAYMENTS=false`, `MEZO_RPC_URL`, `MUSD_ADDRESS`. Do **not** put `AGENT_PRIVATE_KEY` on a public host unless it is a throwaway funded only for the demo.
