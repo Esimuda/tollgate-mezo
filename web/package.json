@@ -1,0 +1,7 @@
+{
+  "name": "tollgate-mezo-web",
+  "private": true,
+  "scripts": { "dev": "next dev", "build": "next build", "start": "next start", "agent": "node scripts/agent-demo.mjs" },
+  "dependencies": { "next": "15.5.4", "react": "19.1.1", "react-dom": "19.1.1", "viem": "^2.37.0" },
+  "devDependencies": { "typescript": "^5.6.0", "@types/react": "^19.0.0", "@types/node": "^22.0.0" }
+}
