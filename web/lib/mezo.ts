@@ -1,4 +1,4 @@
-import { createPublicClient, http, defineChain, parseAbi } from "viem";
+import { createPublicClient, http, defineChain, parseAbi, parseEventLogs } from "viem";
 
 export const mezoTestnet = defineChain({
   id: 31611,
@@ -17,6 +17,7 @@ export const tollgateAbi = parseAbi([
   "function payCall(uint256 id, bytes32 requestId, uint128 maxPrice)",
   "function isPaid(bytes32 requestId, uint256 id) view returns (bool)",
   "function receipts(bytes32) view returns (uint256 tollId, address payer, uint128 amount, uint64 paidAt)",
+  "event TollCreated(uint256 indexed tollId, address indexed owner, address payee, uint128 price, bytes32 endpointHash)",
   "event CallPaid(uint256 indexed tollId, bytes32 indexed requestId, address indexed payer, uint128 amount, uint128 fee)",
 ]);
 
@@ -29,4 +30,12 @@ export async function verifyPayment(onchainTollId: bigint, requestId: `0x${strin
   if (!ok) return { ok: false as const };
   const [, payer, amount] = await client.readContract({ address: TOLLGATE, abi: tollgateAbi, functionName: "receipts", args: [requestId] });
   return { ok: true as const, payer, amount };
+}
+
+/** Read the on-chain toll id from a createToll tx receipt (TollCreated event). */
+export async function tollIdFromTx(hash: `0x${string}`): Promise<string> {
+  const r = await client.waitForTransactionReceipt({ hash });
+  const logs = parseEventLogs({ abi: tollgateAbi, eventName: "TollCreated", logs: r.logs.filter((l) => l.address.toLowerCase() === TOLLGATE.toLowerCase()) });
+  if (!logs.length) throw new Error("no TollCreated event in tx");
+  return logs[0].args.tollId.toString();
 }
