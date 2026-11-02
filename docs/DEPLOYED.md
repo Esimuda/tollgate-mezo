@@ -37,5 +37,7 @@ Agent still needs testnet MUSD (borrow at https://mezo.org/feature/borrow after 
 - The browser agent console (`/agent`) pays live via `/api/agent-pay`, which signs with `AGENT_PRIVATE_KEY` from the server env (demo only; never committed).
 
 ## Public hosting
-GitHub + Drive demo are the judge-facing artifacts for now. A Cloudflare quick tunnel from the build box failed (outbound QUIC/7844 blocked). Stable public URL needs a Vercel (or similar) deploy of `web/` with env:
-`TOLLGATE_CONTRACT=0x449589641A2134e86aaEf5E463AD5419F273440D`, `TOLLGATE_MOCK_PAYMENTS=false`, `MEZO_RPC_URL`, `MUSD_ADDRESS`. Do **not** put `AGENT_PRIVATE_KEY` on a public host unless it is a throwaway funded only for the demo.
+- **Live app:** https://tollgate-mezo.vercel.app (production, Vercel project `tollgate-mezo`, root `web/`)
+- Deployed 2026-11-02 (Africa/Lagos) from `20ac35d` (Next.js 15.5.28). Login wall off.
+- Env on host: `TOLLGATE_CONTRACT=0x449589641A2134e86aaEf5E463AD5419F273440D`, `TOLLGATE_MOCK_PAYMENTS=false`, `MEZO_RPC_URL`, `MUSD_ADDRESS`.
+- Do **not** put `AGENT_PRIVATE_KEY` on the public host (agent-pay stays local/demo-only).
